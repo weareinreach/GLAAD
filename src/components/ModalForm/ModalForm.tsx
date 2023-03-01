@@ -1,6 +1,8 @@
-import { Modal, Group, TextInput, FileInput, Select } from '@mantine/core'
+import { Modal, Group, Text, TextInput, FileInput, Select, useMantineTheme } from '@mantine/core'
+import { Dropzone, DropzoneProps } from '@mantine/dropzone'
 import { useForm } from '@mantine/form'
 import { useMediaQuery } from '@mantine/hooks'
+import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react'
 import { useState, useRef } from 'react'
 
 import { Button } from '../Button/Button'
@@ -36,6 +38,10 @@ export const ModalForm = () => {
 		console.log(form.values)
 	}
 
+	// dropzone functions
+
+	const theme = useMantineTheme()
+
 	return (
 		<>
 			<Modal
@@ -66,7 +72,25 @@ export const ModalForm = () => {
 						{...form.getInputProps('keyJoy')}
 					/>
 					<FileInput ref={imageInput} placeholder='Pick an image' label='Image' withAsterisk />
-
+					<Dropzone
+						onDrop={(files) => console.log('accepted files', files)}
+						onReject={(files) => console.log('rejected files', files)}
+						maxSize={3 * 1024 ** 2}
+					>
+						<Group position='center' spacing='xl' style={{ minHeight: 220, pointerEvents: 'none' }}>
+							<Dropzone.Accept>
+								<IconUpload size={50} stroke={1.5} />
+							</Dropzone.Accept>
+							<Dropzone.Idle>
+								<IconPhoto size={50} stroke={1.5} />
+							</Dropzone.Idle>
+						</Group>
+						<div>
+							<Text size='xl' inline>
+								{'Drag image here or click to select files'}
+							</Text>
+						</div>
+					</Dropzone>
 					<Group position='right' mt='md'>
 						<Button type='submit'>{'Submit'}</Button>
 					</Group>
