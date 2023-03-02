@@ -1,4 +1,4 @@
-import { Modal, Group, Text, TextInput, FileInput, Select, Input } from '@mantine/core'
+import { Modal, Group, Text, TextInput, FileInput, Select, Input, Container, Center } from '@mantine/core'
 import { Dropzone } from '@mantine/dropzone'
 import { useForm } from '@mantine/form'
 import { useMediaQuery } from '@mantine/hooks'
@@ -16,8 +16,11 @@ export const ModalForm = () => {
 	const imageInput = useRef<HTMLDivElement>(null)
 	const isMobile = useMediaQuery('(max-width: 1000px)')
 	const [files, setFiles] = useState<FileWithPath[]>([])
+
+	// scale for Avatar Editor
 	const [scale, setScale] = useState(0)
 
+	// form, validation and submission
 	const form = useForm({
 		initialValues: {
 			name: '',
@@ -46,11 +49,12 @@ export const ModalForm = () => {
 		console.log(form.values)
 	}
 
+	// Dropzone functions
+
 	// AvatarEditor functions
 	const handleScale = (e: ChangeEvent<HTMLInputElement>) => {
 		const scale = parseFloat(e.target.value)
 		setScale(scale)
-		console.log(scale)
 	}
 
 	return (
@@ -84,44 +88,52 @@ export const ModalForm = () => {
 					/>
 					{/* <FileInput ref={imageInput} placeholder='Pick an image' label='Image' withAsterisk /> */}
 					<Input.Label>{'Image'}</Input.Label>
-					<Dropzone onDrop={(files) => setFiles(files)}>
-						<Group position='center' spacing='xl' style={{ minHeight: 220, pointerEvents: 'none' }}>
-							<Dropzone.Accept>
-								<IconUpload size={50} stroke={1.5} />
-							</Dropzone.Accept>
-							<Dropzone.Idle>
-								<IconPhoto size={50} stroke={1.5} />
-							</Dropzone.Idle>
-						</Group>
-						<div>
-							<Text size='xl' inline>
-								{'Drag image here or click to select files'}
-							</Text>
-						</div>
-					</Dropzone>
+					{files[0] == null ? (
+						<Dropzone onDrop={(files) => setFiles(files)}>
+							<Group position='center' spacing='xl' style={{ minHeight: 220, pointerEvents: 'none' }}>
+								<Dropzone.Accept>
+									<IconUpload size={50} stroke={1.5} />
+								</Dropzone.Accept>
+								<Dropzone.Idle>
+									<IconPhoto size={50} stroke={1.5} />
+								</Dropzone.Idle>
+							</Group>
+							<div>
+								<Text size='xl' inline>
+									{'Drag image here or click to select files'}
+								</Text>
+							</div>
+						</Dropzone>
+					) : (
+						<Container>
+							<Center>
+								<AvatarEditor
+									image={files[0]}
+									width={250}
+									height={250}
+									border={50}
+									color={[255, 255, 255, 0.6]} // RGBA
+									scale={scale}
+									rotate={0}
+								/>
+							</Center>
+							<Center>
+								<input
+									name='scale'
+									type='range'
+									onChange={(e) => handleScale(e)}
+									max='3'
+									min='1'
+									step='0.01'
+									defaultValue='1'
+								/>
+							</Center>
+						</Container>
+					)}
 					<Group position='right' mt='md'>
 						<Button type='submit'>{'Submit'}</Button>
 					</Group>
 				</form>
-				<AvatarEditor
-					image='https://images.unsplash.com/photo-1597223557154-721c1cecc4b0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fGZhY2V8ZW58MHx8MHx8&w=1000&q=80'
-					width={250}
-					height={250}
-					border={50}
-					color={[255, 255, 255, 0.6]} // RGBA
-					scale={scale}
-					rotate={0}
-				/>
-				<br />
-				<input
-					name='scale'
-					type='range'
-					onChange={(e) => handleScale(e)}
-					max='3'
-					min='1'
-					step='0.01'
-					defaultValue='1'
-				/>
 			</Modal>
 
 			<Group position='center'>
