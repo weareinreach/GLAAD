@@ -21,20 +21,16 @@ import AvatarEditor from 'react-avatar-editor'
 import { Button } from '../Button/Button'
 
 import type { FileWithPath } from '@mantine/dropzone'
-import type { ChangeEvent } from 'react'
-
-// TODO : Try adding a Loading Dropzone to adjust for file set
 
 export const ModalForm = () => {
 	const [opened, setOpened] = useState(false)
 	// const imageInput = useRef<HTMLDivElement>(null)
 	const isMobile = useMediaQuery('(max-width: 1000px)')
 	const [files, setFiles] = useState<FileWithPath[]>([])
-	const [image, setImage] = useState<File>()
 
 	// variables for Avatar Editor
 	const [scale, setScale] = useState(1)
-	const editor = useRef<HTMLCanvasElement>(null)
+	const editor = useRef<AvatarEditor>(null)
 
 	// form, validation and submission
 	const form = useForm({
@@ -68,10 +64,10 @@ export const ModalForm = () => {
 	// Dropzone functions
 
 	// AvatarEditor functions
-
-	// const handleSave = () => {
-	//   const img:<HTMLCanvasElement> = editor.current?.getImageScaledToCanvas().toDataURL()
-	// }
+	const handleSave = () => {
+		const img = editor.current?.getImageScaledToCanvas().toDataURL()
+		console.log(img)
+	}
 
 	return (
 		<>
@@ -124,6 +120,7 @@ export const ModalForm = () => {
 						<Container>
 							<Center>
 								<AvatarEditor
+									ref={editor}
 									image={files[0]}
 									width={250}
 									height={250}
@@ -148,7 +145,7 @@ export const ModalForm = () => {
 								/>
 							</Stack>
 							<Center>
-								<div>
+								<div onClick={() => handleSave()}>
 									<Button>{'Save Image'}</Button>
 								</div>
 							</Center>
