@@ -1,4 +1,16 @@
-import { Modal, Group, Text, TextInput, FileInput, Select, Input, Container, Center } from '@mantine/core'
+import {
+	Modal,
+	Group,
+	Text,
+	TextInput,
+	FileInput,
+	Select,
+	Input,
+	Container,
+	Center,
+	Slider,
+	Stack,
+} from '@mantine/core'
 import { Dropzone } from '@mantine/dropzone'
 import { useForm } from '@mantine/form'
 import { useMediaQuery } from '@mantine/hooks'
@@ -18,6 +30,7 @@ export const ModalForm = () => {
 	// const imageInput = useRef<HTMLDivElement>(null)
 	const isMobile = useMediaQuery('(max-width: 1000px)')
 	const [files, setFiles] = useState<FileWithPath[]>([])
+	const [image, setImage] = useState<File>()
 
 	// variables for Avatar Editor
 	const [scale, setScale] = useState(1)
@@ -55,10 +68,10 @@ export const ModalForm = () => {
 	// Dropzone functions
 
 	// AvatarEditor functions
-	const handleScale = (e: ChangeEvent<HTMLInputElement>) => {
-		const scale = parseFloat(e.target.value)
-		setScale(scale)
-	}
+
+	// const handleSave = () => {
+	//   const img:<HTMLCanvasElement> = editor.current?.getImageScaledToCanvas().toDataURL()
+	// }
 
 	return (
 		<>
@@ -119,16 +132,25 @@ export const ModalForm = () => {
 									scale={scale}
 								/>
 							</Center>
-							<Center>
-								<input
-									name='scale'
-									type='range'
-									onChange={(e) => handleScale(e)}
-									max='3'
-									min='1'
-									step='0.01'
-									defaultValue='1'
+							<Stack spacing='xl' p='xl'>
+								<Slider
+									py='xl'
+									value={scale}
+									size='xl'
+									color='dark'
+									scale={(v) => 2 ** v}
+									step={0.01}
+									min={1}
+									max={3}
+									defaultValue={1}
+									onChange={setScale}
+									label={null}
 								/>
+							</Stack>
+							<Center>
+								<div>
+									<Button>{'Save Image'}</Button>
+								</div>
 							</Center>
 						</Container>
 					)}
