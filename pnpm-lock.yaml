@@ -47,6 +47,7 @@ specifiers:
   '@types/node': 16.18.12
   '@types/prettier': 2.7.2
   '@types/react': 18.0.28
+  '@types/react-avatar-editor': 13.0.0
   '@types/react-dom': 18.0.11
   '@typescript-eslint/eslint-plugin': 5.52.0
   '@typescript-eslint/parser': 5.52.0
@@ -116,6 +117,7 @@ dependencies:
   '@trpc/next': 10.12.0_3wi4bq3cjtt55c7zuonh5a5o34
   '@trpc/react-query': 10.12.0_t6pkpjuzl4hzq7yqu7znt6owvu
   '@trpc/server': 10.12.0
+  '@types/react-avatar-editor': 13.0.0
   dayjs: 1.11.7
   embla-carousel-auto-height: 7.0.9_embla-carousel@7.0.9
   embla-carousel-react: 7.0.9_react@18.2.0
@@ -4610,6 +4612,12 @@ packages:
   /@types/range-parser/1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: true
+
+  /@types/react-avatar-editor/13.0.0:
+    resolution: {integrity: sha512-5ymOayy6mfT35xTqzni7UjXvCNEg8/pH4pI5RenITp9PBc02KGTYjSV1WboXiQDYSh5KomLT0ngBLEAIhV1QoQ==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: false
 
   /@types/react-dom/18.0.11:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}

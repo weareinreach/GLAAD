@@ -11,14 +11,17 @@ import { Button } from '../Button/Button'
 import type { FileWithPath } from '@mantine/dropzone'
 import type { ChangeEvent } from 'react'
 
+// TODO : Try adding a Loading Dropzone to adjust for file set
+
 export const ModalForm = () => {
 	const [opened, setOpened] = useState(false)
-	const imageInput = useRef<HTMLDivElement>(null)
+	// const imageInput = useRef<HTMLDivElement>(null)
 	const isMobile = useMediaQuery('(max-width: 1000px)')
 	const [files, setFiles] = useState<FileWithPath[]>([])
 
-	// scale for Avatar Editor
-	const [scale, setScale] = useState(0)
+	// variables for Avatar Editor
+	const [scale, setScale] = useState(1)
+	const editor = useRef<HTMLCanvasElement>(null)
 
 	// form, validation and submission
 	const form = useForm({
@@ -88,7 +91,7 @@ export const ModalForm = () => {
 					/>
 					{/* <FileInput ref={imageInput} placeholder='Pick an image' label='Image' withAsterisk /> */}
 					<Input.Label>{'Image'}</Input.Label>
-					{files[0] == null ? (
+					{files[0] === undefined ? (
 						<Dropzone onDrop={(files) => setFiles(files)}>
 							<Group position='center' spacing='xl' style={{ minHeight: 220, pointerEvents: 'none' }}>
 								<Dropzone.Accept>
@@ -114,7 +117,6 @@ export const ModalForm = () => {
 									border={50}
 									color={[255, 255, 255, 0.6]} // RGBA
 									scale={scale}
-									rotate={0}
 								/>
 							</Center>
 							<Center>
