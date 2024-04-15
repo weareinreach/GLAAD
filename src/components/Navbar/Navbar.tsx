@@ -1,178 +1,128 @@
-import { Anchor, Burger, Container, createStyles, Drawer, Header, rem, Text } from '@mantine/core'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { Anchor, Burger, Container, Drawer, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { useCallback, useEffect } from "react";
 
-const HEADER_HEIGHT = 75
+import classes from "./Navbar.module.css";
 
-export const useStyles = createStyles((theme) => ({
-	glaadGray: {
-		backgroundColor: theme.other.colors.glaadGray,
-	},
+// const HEADER_HEIGHT = 75
 
-	navbar: {
-		display: 'flex',
-		justifyContent: 'space-around',
-		alignItems: 'center',
-		height: '100%',
-
-		['& a']: {
-			color: theme.colors.gray[0],
-			flexDirection: 'row',
-			textAlign: 'center',
-			justifyContent: 'center',
-			alignItems: 'center',
-			fontSize: theme.fontSizes.lg,
-		},
-
-		[theme.fn.smallerThan('md')]: {
-			display: 'none',
-		},
-	},
-
-	burger: {
-		display: 'flex',
-		alignItems: 'center',
-		height: '100%',
-
-		[theme.fn.largerThan('md')]: {
-			display: 'none',
-		},
-	},
-
-	navlink: {
-		color: theme.colors.gray[0],
-		display: 'flex',
-		width: '100%',
-		height: '100%',
-		fontWeight: 600,
-		fontSize: rem(32),
-		fontStyle: 'italic',
-		flexDirection: 'column',
-		marginTop: theme.spacing.md,
-		marginBottom: theme.spacing.md,
-		textDecoration: 'none',
-
-		['&:active, &:hover']: {
-			textDecoration: 'underline',
-		},
-	},
-}))
-
-const NavLinks = ({ setOpened }: { setOpened?: Dispatch<SetStateAction<boolean>> }) => {
-	const { classes } = useStyles()
-	const { t } = useTranslation()
-	const router = useRouter()
+const NavLinks = ({
+	drawerHandler,
+}: {
+	drawerHandler?: ReturnType<typeof useDisclosure>[1];
+}) => {
+	const { t } = useTranslation();
+	const router = useRouter();
 	const linksInfo = [
-		{ key: 'nav.home', href: '/' as const },
-		{ key: 'nav.gallery', href: '/gallery' as const },
-		{ key: 'nav.act', href: '/act' as const },
-		{ key: 'nav.about', href: '/about' as const },
-		{ key: 'nav.share', href: '/share' as const },
-		{ key: 'nav.find-resources', href: 'https://app.inreach.org' as const },
-	] //satisfies Array<Readonly<LinkData>>
+		{ key: "nav.home", href: "/" as const },
+		{ key: "nav.gallery", href: "/gallery" as const },
+		{ key: "nav.act", href: "/act" as const },
+		{ key: "nav.about", href: "/about" as const },
+		{ key: "nav.share", href: "/share" as const },
+		{ key: "nav.find-resources", href: "https://app.inreach.org" as const },
+	]; //satisfies Array<Readonly<LinkData>>
 
 	useEffect(() => {
-		router.events.on('routeChangeComplete', () => setOpened && setOpened(false))
+		const drawerCloser = (_: unknown) => drawerHandler && drawerHandler.close();
 
-		return router.events.off('routeChangeComplete', () => setOpened && setOpened(false))
+		router.events.on("routeChangeComplete", drawerCloser);
+
+		return router.events.off("routeChangeComplete", drawerCloser);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.asPath])
+	}, [router.asPath]);
 
 	const links = linksInfo.map(({ key, href }) => {
-		if (href === 'https://app.inreach.org') {
+		if (href === "https://app.inreach.org") {
 			return (
 				<a key={key} href={href} className={classes.navlink}>
 					{t(key).toLocaleUpperCase()}
 				</a>
-			)
+			);
 		}
 
 		return (
 			<Link key={key} href={href} className={classes.navlink}>
 				{t(key).toLocaleUpperCase()}
 			</Link>
-		)
-	})
+		);
+	});
 
-	return <>{links}</>
-}
-
-// const HomeButton = () => (
-// 	<Link href='/'>
-// 		<Button leftIcon={<IconArrowBigLeftFilled />} color='gray.0' variant='outline'>
-// 			{' Home'}
-// 		</Button>
-// 	</Link>
-// )
+	return <>{links}</>;
+};
 
 // This type is only needed when trying to make a story for a page
 // to check whether the button to go to the main page works
-type pathProp = { path?: string }
+type pathProp = { path?: string };
 
 const HamburgerMenu = ({ path }: pathProp) => {
-	const [opened, setOpened] = useState(false)
-	const { classes } = useStyles()
-	const router = useRouter()
-	const { asPath, pathname, query, locale } = router
-	const { t } = useTranslation()
+	const [opened, handler] = useDisclosure(false);
+	const router = useRouter();
+	const { asPath, pathname, query, locale } = router;
+	const { t } = useTranslation();
+
+	const switchLang = useCallback(
+		() =>
+			router.replace({ pathname, query }, asPath, {
+				locale: locale === "en" ? "es" : "en",
+			}),
+		[router, locale, asPath, query, pathname],
+	);
 
 	return (
-		<Container className={classes.burger} sx={{ justifyContent: path === '/' ? 'end' : 'space-between' }}>
+		<Container
+			className={classes.burger}
+			style={{ justifyContent: path === "/" ? "end" : "space-between" }}
+		>
 			<Drawer
 				opened={opened}
-				onClose={() => setOpened(false)}
+				onClose={handler.close}
 				title={
-					<Text fz='md' fw={900} color='gray.0'>
-						{'InReach X GLAAD'}
+					<Text fz="md" fw={900} c="gray.0">
+						{"InReach X GLAAD"}
 					</Text>
 				}
-				size='sm'
-				padding='xl'
-				styles={(theme) => ({
-					content: {
-						backgroundColor: theme.other.colors.glaadGray,
-					},
-					header: {
-						backgroundColor: theme.other.colors.glaadGray,
-					},
-				})}
+				size="sm"
+				padding="xl"
+				classNames={{
+					content: classes["drawer-bg"],
+					header: classes["drawer-bg"],
+				}}
 			>
-				<NavLinks setOpened={setOpened} />
+				<NavLinks drawerHandler={handler} />
 				<Anchor
-					variant='category'
-					tt='uppercase'
+					variant="category"
+					tt="uppercase"
 					// eslint-disable-next-line @typescript-eslint/no-misused-promises
-					onClick={() =>
-						router.replace({ pathname, query }, asPath, { locale: locale === 'en' ? 'es' : 'en' })
-					}
+					onClick={switchLang}
 				>
-					{t('nav.switch-lang-short')}
+					{t("nav.switch-lang-short")}
 				</Anchor>
 			</Drawer>
-			{/* {path !== '/' ? <HomeButton /> : undefined} */}
 			<Burger
 				opened={opened}
-				onClick={() => setOpened((o) => !o)}
-				size='lg'
-				color='#FEFEFF'
-				aria-label='burgerButton'
-				title='Open sidenav'
+				onClick={handler.toggle}
+				size="lg"
+				color="#FEFEFF"
+				aria-label="burgerButton"
+				title="Open sidenav"
 			/>
 		</Container>
-	)
-}
+	);
+};
 
 export const Navbar = ({ path }: pathProp) => {
-	const { classes } = useStyles()
-	const router = useRouter()
+	const router = useRouter();
 	return (
-		<Header height={HEADER_HEIGHT} className={classes.glaadGray}>
+		// <Header height={HEADER_HEIGHT} className={classes.glaadGray}>
+		<>
 			<Container className={classes.navbar} fluid>
 				<NavLinks />
 			</Container>
-			<HamburgerMenu path={path || router.pathname} />
-		</Header>
-	)
-}
+			<HamburgerMenu path={path ?? router.pathname} />
+		</>
+		// </Header>
+	);
+};
